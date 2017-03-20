@@ -1,6 +1,6 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import { LoginUsers, Users } from '../mockdata/user';
+import { LoginUsers, Users } from './data/user';
 let _Users = Users;
 
 export default {
@@ -39,7 +39,7 @@ export default {
           } else {
             resolve([200, { code: 500, msg: '账号或密码错误' }]);
           }
-        }, 500);
+        }, 1000);
       });
     });
 
@@ -55,7 +55,7 @@ export default {
           resolve([200, {
             users: mockUsers
           }]);
-        }, 500);
+        }, 1000);
       });
     });
 
@@ -74,7 +74,7 @@ export default {
             total: total,
             users: mockUsers
           }]);
-        }, 500);
+        }, 1000);
       });
     });
 
@@ -82,6 +82,21 @@ export default {
     mock.onGet('/user/remove').reply(config => {
       let { id } = config.params;
       _Users = _Users.filter(u => u.id !== id);
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve([200, {
+            code: 200,
+            msg: '删除成功'
+          }]);
+        }, 500);
+      });
+    });
+
+    //批量删除用户
+    mock.onGet('/user/batchremove').reply(config => {
+      let { ids } = config.params;
+      ids = ids.split(',');
+      _Users = _Users.filter(u => !ids.includes(u.id));
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           resolve([200, {
